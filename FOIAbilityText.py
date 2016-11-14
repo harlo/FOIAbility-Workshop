@@ -1,7 +1,13 @@
+import os
+
 from examples.map_NER_per_page import map_NER_per_page
 from examples.find_word_frequencies_per_page import find_word_frequencies_per_page
+from examples.get_bag_of_words_per_page import get_bag_of_words_per_page
+from vars import MISC_DIR
 
 from FOIAbilityObject import FOIAbilityObject
+
+STOPWORDS_PATH = os.path.join(MISC_DIR, "stopwords.json")
 
 class FOIAbilityText(FOIAbilityObject):
 	def __init__(self, text_stream=None, parent_id=None, id=None):
@@ -52,11 +58,11 @@ class FOIAbilityText(FOIAbilityObject):
 				print "FOIAbilityText ERROR: could not link parent id"
 				return False
 
-		self.emit(pretty=True)
-		return self.map_NER()
+		return self.map_NER() and \
+			self.map_word_frequencies() and \
+			self.get_bag_of_words()
 
 	def map_NER(self):
-		# do NER mapping
 		try:
 			entities = map_NER_per_page(self.obj['text_stream'])
 			for entity_type in entities.keys():
@@ -70,5 +76,24 @@ class FOIAbilityText(FOIAbilityObject):
 		return False
 
 	def map_word_frequencies(self):
+		try:
+			self.obj['word_frequencies'] = find_word_frequencies_per_page(self.obj['text_stream'], STOPWORDS_PATH)
+			
+			return True
+		except Exception as e:
+			print "FOIAbilityText ERROR: failure mapping word frequencies"
+			print e, type(e)
+
+		return False
+
+	def get_bag_of_words(self):
+		try:
+			self.obj['bag_of_words'] = get_bag_of_words_per_page(self.obj['text_stream'], STOPWORDS_PATH)
+			
+			return True
+		except Exception as e:
+			print "FOIAbilityText ERROR: failure getting bag of words"
+			print e, type(e)
+
 		return False
 

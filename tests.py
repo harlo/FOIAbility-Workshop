@@ -81,9 +81,9 @@ if __name__ == "__main__":
 	#test_upload_pdf_to_documentcloud()
 	#test_download_ocr_text_per_page()
 	#test_find_word_frequencies_per_page()
-	test_get_bag_of_words_per_page()
+	#test_get_bag_of_words_per_page()
 	#test_setup_schema()
 	#test_create_doc()
-	#test_create_pdf()
+	test_create_pdf()
 	#test_create_text()
 
