@@ -1,0 +1,3 @@
+[submodule "lib/PyNER"]
+	path = lib/PyNER
+	url = git@github.com:dat/pyner.git
