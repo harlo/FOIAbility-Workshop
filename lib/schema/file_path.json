@@ -1,0 +1,5 @@
+{
+	"name" : "file_path",
+	"type" : "string",
+	"stored" : true
+}

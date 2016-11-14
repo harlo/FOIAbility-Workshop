@@ -1,0 +1,5 @@
+{
+	"name" : "mime_type",
+	"type" : "string",
+	"stored" : true
+}

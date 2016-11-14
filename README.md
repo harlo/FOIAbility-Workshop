@@ -98,6 +98,8 @@ Going forward, we're going to be batch processing text using the NER, so it will
 alias NER='cd ~/stanford-ner-2015-12-09 && java -mx600m -cp "*:lib/*" edu.stanford.nlp.ie.NERServer -port 2020 -loadClassifier classifiers/english.all.3class.distsim.crf.ser.gz -outputFormat inlineXML &'
 ```
 
+Then make the alias immediately available with `source ~/.bashrc`.
+
 ## Installing Apache Solr
 
 ### 1. Download and import Apache developers' signing keys

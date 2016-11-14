@@ -1,0 +1,6 @@
+filemagic
+PyPDF2
+pycrypto
+requests
+python-documentcloud
+google-api-python-client
