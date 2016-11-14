@@ -1,0 +1,6 @@
+{
+	"name" : "bag_of_words",
+	"type" : "string",
+	"stored" : false,
+	"indexed" : true
+}

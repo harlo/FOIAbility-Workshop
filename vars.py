@@ -11,6 +11,10 @@ MIME_TYPES = {
 		"aliases" : [
 			r'PDF document,?.*'
 		],
-		"full_name" : "application/pdf"
+		"full_name" : "application/pdf",
+		"eval_modes" : {
+			"PyPDF" : 1,
+			"Documentcloud" : 2
+		}
 	}
 }
