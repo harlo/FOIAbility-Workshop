@@ -1,31 +1,27 @@
 import os
 from vars import MIME_TYPES, DATA_DIR
 
-class FOIAbilityDoc():
+from FOIAbilityObject import FOIAbilityObject
+
+class FOIAbilityDoc(FOIAbilityObject):
 	def __init__(self, file_path=None, id=None):
-		self.obj = {
-			"file_path" : file_path,
-			"id" : id
-		}
+		FOIAbilityObject.__init__(self, id=id)
 
-		if not self.get_by_id() and self.create():
-			print "FOIAbilityDoc ERROR: could not create this unknown document"
-			return
+		self.obj.update({
+			"file_path" : file_path
+		})
 
-		self.inflate()
+		if not self.get_by_id() or not self.get_by_file_path():
+			print "FOIAbilityDoc WARN: possibly new doc. Creating it..."
+
+			if not self.create():
+				print "FOIAbilityDoc ERROR: could not create this unknown document"
 
 	def get_by_file_path(self):
 		# inflate from solr by file_path
 		
-		if self.obj['file_path'] is not None:
-			pass
-
-		return False
-
-	def get_by_id(self):
-		# inflate from solr by id
-
-		if self.obj['id'] is not None:
+		if 'file_path' in self.obj.keys() and self.obj['file_path'] is not None:
+			# query solr by file_path
 			pass
 
 		return False
@@ -56,15 +52,21 @@ class FOIAbilityDoc():
 		from hashlib import sha256
 		from vars import BUFFER_MAX
 
-		h = sha256()
-		with open(self.obj['file_path'], 'rb') as f:
-			d = f.read(BUFFER_MAX)
-			while len(d) > 0:
-				h.update(d)
+		try:
+			h = sha256()
+			with open(self.obj['file_path'], 'rb') as f:
 				d = f.read(BUFFER_MAX)
+				while len(d) > 0:
+					h.update(d)
+					d = f.read(BUFFER_MAX)
 
-		self.obj['id'] = h.hexdigest()
-		return self.save()
+			self.obj['id'] = h.hexdigest()
+			return self.save()
+		
+		except Exception as e:
+			print "FOIAbilityDoc ERROR: could not create hash"
+		
+		return False
 
 	def set_mime_type(self):
 		# find out what the mime type is and set to self.obj
@@ -87,27 +89,53 @@ class FOIAbilityDoc():
 					break
 
 			if "mime_type" in self.obj.keys():
-				break
+				return self.save()
 
-		return self.save()
-
-	def link_doc(self, id):
-		# add another doc as a reference
-		return self.save()
-
-	def add_data(self, key, value):
-		# add data to be indexed in the doc
-		return self.save()
+		return False
 
 	def inflate(self):
 		# inflate all the data from flat files into object
-		return False
+		return True
 
 	def create(self):
-		return self.set_hash() and \
-			self.set_mime_type() and \
-			self.create_doc_dir()
+		if not FOIAbilityObject.create(self):
+			return False
 
-	def save(self):
-		# save self.obj to solr
-		return True
+		try:
+			return self.set_hash() and \
+				self.set_mime_type() and \
+				self.create_doc_dir() and \
+				self.inflate()
+
+		except Exception as e:
+			print "FOIAbilityDoc ERROR: could not create document."
+			print e, type(e)
+
+		return False
+
+	def delete(self, delete_file=False):
+		if not FOIAbilityObject.delete(self):
+			return False
+		
+		# remove assets
+		if 'id' not in self.obj.keys() or self.obj['id'] is None:
+			print "FOIAbilityDoc ERROR: no id"
+			return False
+
+		from shutil import rmtree
+		doc_dir = os.path.join(DATA_DIR, self.obj['id'])
+
+		try:
+			rmtree(doc_dir)
+		except Exception as e:
+			print "FOIAbilityDoc ERROR: could not remove doc_dir"
+			return False
+
+		if delete_file:
+			try:
+				os.remove(self.obj['file_path'])
+			except Exception as e:
+				print "FOIAbilityDoc WARN: could not remove original file from file_path"
+				print e, type(e)
+
+		return not os.path.exists(doc_dir)
