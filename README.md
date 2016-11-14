@@ -52,7 +52,7 @@ source ~/.bashrc
 
 ### Python packages
 
-All of the python modules you'll need are listed in `requirements.txt`. To install them, simply run `pip install --user -r requirements.txt` and follow any prompts.
+All of the python modules you'll need are listed in `requirements.txt`. To install them, simply run `sudo pip install -r requirements.txt` and follow any prompts.
 
 ## Installing the Stanford NER package
 
@@ -67,7 +67,35 @@ unzip stanford-ner.zip
 
 ### 2. Install PyNER
 
+PyNER is a python package that provides easy interface with the NER software you downloaded. It's already included as a submodule in this project, but you have to manually install and set it up.
+
 ```
+cd ~/FOIAbility-Workshop/lib/PyNER
+sudo python setup.py install
+```
+
+### 3. Test it out
+
+Before we start scripting the NER, let's just test it for basic functionality:
+
+```
+echo "I complained to Microsoft about Bill Gates" >> ~/test_NER.txt
+cd stanford-ner-2015-12-09
+java -mx600m -cp "*:lib/*" edu.stanford.nlp.ie.crf.CRFClassifier -loadClassifier classifiers/english.all.3class.distsim.crf.ser.gz -outputFormat inlineXML -textFile ~/test_NER.txt
+rm ~/test_NER.txt
+```
+
+If all goes well, this should output something like:
+
+```
+I complained to <ORGANIZATION>Microsoft</ORGANIZATION> about <PERSON>Bill Gates</PERSON>
+CRFClassifier tagged 15 words in 1 documents at 137.61 words per second.
+```
+
+Going forward, we're going to be batch processing text using the NER, so it will need to function as a server running on port 2020. Create an alias to make that easy for you by appending the following to your `~/.bash_aliases` file:
+
+```
+alias NER='cd ~/stanford-ner-2015-12-09 && java -mx600m -cp "*:lib/*" edu.stanford.nlp.ie.NERServer -port 2020 -loadClassifier classifiers/english.all.3class.distsim.crf.ser.gz -outputFormat inlineXML &'
 ```
 
 ## Installing Apache Solr
