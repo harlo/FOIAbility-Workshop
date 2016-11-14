@@ -8,6 +8,8 @@ from examples.download_ocr_text_per_page import download_ocr_text_per_page
 from examples.upload_pdf_to_documentcloud import upload_pdf_to_documentcloud
 from examples.find_word_frequencies_per_page import find_word_frequencies_per_page
 from examples.get_bag_of_words_per_page import get_bag_of_words_per_page
+from examples.parse_metadata_from_pdf import parse_metadata_from_pdf
+from examples.check_for_gibberish import check_for_gibberish
 #from examples.extract_attachment_from_raw_email import extract_attachment_from_raw_email
 #from examples.chart_email_chain_over_time import chart_email_chain_over_time
 #from examples.export_incomplete_ocr_to_google_drive import export_incomplete_ocr_to_google_drive
@@ -16,7 +18,8 @@ from examples.get_bag_of_words_per_page import get_bag_of_words_per_page
 from utils import get_credentials, setup_schema
 from vars import *
 
-TEST_PDF = "/home/harlo/stash/rindfleisch_a90d1239f1626171d2e5cb759e8891d6_11.pdf"
+TEST_PDF = os.path.join(DATA_DIR, "rindfleisch_a90d1239f1626171d2e5cb759e8891d6_11.pdf")
+TEST_EMAIL_PDF = os.path.join(DATA_DIR, "fpf_foia_emails.pdf")
 TEST_PDF_DOCUMENTCLOUD_ID = ""
 TEST_TEXT_BLOB = "I complained to Microsoft about Bill Gates and Oprah"
 
@@ -53,6 +56,16 @@ def test_download_ocr_text_per_page():
 def test_upload_pdf_to_documentcloud():
 	print upload_pdf_to_documentcloud(TEST_PDF, get_credentials('documentcloud'))
 
+def test_parse_metadata_from_pdf():
+	print parse_metadata_from_pdf(TEST_EMAIL_PDF)
+
+def test_check_for_gibberish():
+	is_english = extract_text_per_page(TEST_PDF, 1)[0]
+	print check_for_gibberish(is_english)
+
+	is_gibberish = extract_text_per_page(TEST_EMAIL_PDF, 10)[0]
+	print check_for_gibberish(is_gibberish)
+
 def test_get_credentials():
 	print get_credentials('documentcloud')
 
@@ -74,16 +87,24 @@ def test_create_text():
 	text = FOIAbilityText(text_stream=TEST_TEXT_BLOB)
 	text.delete()
 
+def test_create_email():
+	pdf = FOIAbilityPDF(file_path=TEST_EMAIL_PDF)
+	pdf.emit(pretty=True)
+	pdf.delete()
+
 if __name__ == "__main__":
 	#test_get_credentials()
 	#test_extract_text_per_page()
+	#test_check_for_gibberish()
 	#test_ner_per_page()
 	#test_upload_pdf_to_documentcloud()
 	#test_download_ocr_text_per_page()
 	#test_find_word_frequencies_per_page()
 	#test_get_bag_of_words_per_page()
+	#test_parse_metadata_from_pdf()
 	#test_setup_schema()
 	#test_create_doc()
-	test_create_pdf()
+	#test_create_pdf()
+	test_create_email()
 	#test_create_text()
 

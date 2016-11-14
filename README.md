@@ -100,6 +100,19 @@ alias NER='cd ~/stanford-ner-2015-12-09 && java -mx600m -cp "*:lib/*" edu.stanfo
 
 Then make the alias immediately available with `source ~/.bashrc`.
 
+## Installing NLTK
+
+NLTK can be seen as a companion to the Stanford Core NLP. NLTK is a robust package that contains a number of excellent NLP tools, and has a handy python API. The core module is already included in `requirements.txt`, but you also need to install its data package(s), which helps classify any language you throw at it.
+
+For this demo, we will only be needing a small corpus; I chose the Averaged Perceptron Tagger corpus and the Punkt corpus. Run the following commands:
+
+```
+sudo python -m nltk.downloader -d ~/nltk_data averaged_perceptron_tagger
+sudo python -m nltk.downloader -d ~/nltk_data punkt
+```
+
+More info about the variety of corpora can be found [http://www.nltk.org/nltk_data/][here].
+
 ## Installing Apache Solr
 
 ### 1. Download and import Apache developers' signing keys

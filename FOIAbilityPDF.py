@@ -3,14 +3,15 @@ from PyPDF2 import PdfFileReader
 from FOIAbilityDoc import FOIAbilityDoc
 from FOIAbilityText import FOIAbilityText
 from examples.extract_text_per_page import extract_text_per_page
-from examples.download_orc_text_per_page import download_orc_text_per_page
+from examples.download_ocr_text_per_page import download_ocr_text_per_page
+from examples.parse_metadata_from_pdf import parse_metadata_from_pdf
 
 from utils import get_credentials
 from vars import MIME_TYPES
 
-class FOIAbilityPDF(FOIAbilityDoc):
-	MODES = MIME_TYPES['pdf']['eval_modes']
+MODES = MIME_TYPES['pdf']['eval_modes']
 
+class FOIAbilityPDF(FOIAbilityDoc):
 	def __init__(self, file_path=None, id=None):
 		FOIAbilityDoc.__init__(self, file_path=file_path, id=id)
 
@@ -25,7 +26,21 @@ class FOIAbilityPDF(FOIAbilityDoc):
 			print e, type(e)
 			return False
 
-		return self.evaluate_text()
+		return self.evaluate_text() and \
+			self.evaluate_metadata()
+
+	def evaluate_metadata(self):
+		try:
+			metadata = parse_metadata_from_pdf(self.obj['file_path'])
+			if metadata is not None:
+				self.obj['metadata'] = metadata
+
+			return True
+		except Exception as e:
+			print "FOIAbilityPDF ERROR: could not get metadata from pdf"
+			print e, type(e)
+
+		return False
 
 	def evaluate_text(self, mode=MODES['PyPDF']):
 		try:
@@ -49,7 +64,7 @@ class FOIAbilityPDF(FOIAbilityDoc):
 
 				if mode == MODES['Documentcloud']:
 					try:
-						text = download_orc_text_per_page(page, get_credentials('Documentcloud'))
+						text = download_ocr_text_per_page(page, get_credentials('Documentcloud'))
 					except Exception as e:
 						print "FOIAbilityPDF WARN: could not get text from page (mode Documentcloud)"
 						print e, type(e)
@@ -70,11 +85,12 @@ class FOIAbilityPDF(FOIAbilityDoc):
 					print e, type(e)
 					continue
 
-				if page >= 5:
+				if page > 15:
 					break
 
 			return True
 		except Exception as e:
 			print "FOIAbilityPDF ERROR: could not get number of pages in this PDF"
+			print e, type(e)
 		
 		return False

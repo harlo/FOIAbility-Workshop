@@ -3,6 +3,7 @@ import os
 from examples.map_NER_per_page import map_NER_per_page
 from examples.find_word_frequencies_per_page import find_word_frequencies_per_page
 from examples.get_bag_of_words_per_page import get_bag_of_words_per_page
+from examples.check_for_gibberish import check_for_gibberish
 from vars import MISC_DIR
 
 from FOIAbilityObject import FOIAbilityObject
@@ -45,6 +46,10 @@ class FOIAbilityText(FOIAbilityObject):
 			print "FOIAbilityText ERROR: NO TEXT STREAM!"
 			return False
 
+		if check_for_gibberish(self.obj['text_stream']):
+			print "FOIAbilityText ERROR: THIS TEXT IS GARBAGE!"
+			return False
+
 		if not FOIAbilityObject.create(self):
 			return False
 
@@ -58,9 +63,10 @@ class FOIAbilityText(FOIAbilityObject):
 				print "FOIAbilityText ERROR: could not link parent id"
 				return False
 
-		return self.map_NER() and \
-			self.map_word_frequencies() and \
-			self.get_bag_of_words()
+		return self.get_bag_of_words() and \
+			self.map_NER() and \
+			self.map_word_frequencies()
+			
 
 	def map_NER(self):
 		try:
@@ -89,6 +95,7 @@ class FOIAbilityText(FOIAbilityObject):
 	def get_bag_of_words(self):
 		try:
 			self.obj['bag_of_words'] = get_bag_of_words_per_page(self.obj['text_stream'], STOPWORDS_PATH)
+			print self.obj['bag_of_words']
 			
 			return True
 		except Exception as e:

@@ -1,6 +1,9 @@
 filemagic
+fabric
 PyPDF2
 pycrypto
 requests
 python-documentcloud
 google-api-python-client
+beautifulsoup4
+nltk
