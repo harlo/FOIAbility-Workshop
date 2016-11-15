@@ -1,0 +1,5 @@
+{
+	"name" : "metadata.metadata_date",
+	"type" : "date",
+	"stored" : true
+}

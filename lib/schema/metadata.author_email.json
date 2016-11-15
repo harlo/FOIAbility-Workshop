@@ -1,5 +1,5 @@
 {
-	"name" : "parent_id",
+	"name" : "metadata.author_email",
 	"type" : "string",
 	"stored" : true
 }

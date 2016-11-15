@@ -102,7 +102,7 @@ Then make the alias immediately available with `source ~/.bashrc`.
 
 ## Installing NLTK
 
-NLTK can be seen as a companion to the Stanford Core NLP. NLTK is a robust package that contains a number of excellent NLP tools, and has a handy python API. The core module is already included in `requirements.txt`, but you also need to install its data package(s), which helps classify any language you throw at it.
+NLTK can be seen as a companion to the Stanford Core NLP. NLTK is a robust package that contains a number of excellent NLP tools, and has a handy python API. The core module is already included in `requirements.txt`, but you also need to install some data packages, which help classify any language you throw at it.
 
 For this demo, we will only be needing a small corpus; I chose the Averaged Perceptron Tagger corpus and the Punkt corpus. Run the following commands:
 
@@ -151,4 +151,13 @@ Try starting it in the foreground with `solr start -f`, and navigate to `http://
 
 ### 6. Create your core.
 
-In Solr-speak, a *core* is a collection that is capable of indexing and searching through any documents pushed to it.
+In Solr-speak, a *core* is a collection that is capable of indexing and searching through any documents pushed to it. Simply run `solr create -c <name>`.
+
+Certain facets in Solr need to be indexed in a specific way. I've included a script to declare those facets in Solr easily. In python:
+
+```
+from utils import setup_schema
+setup_schema()
+```
+
+will automatically update your core with the appropriate information. See the `lib/schema` folder to peek under the hood.

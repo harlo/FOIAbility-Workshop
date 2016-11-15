@@ -50,9 +50,6 @@ class FOIAbilityText(FOIAbilityObject):
 			print "FOIAbilityText ERROR: THIS TEXT IS GARBAGE!"
 			return False
 
-		if not FOIAbilityObject.create(self):
-			return False
-
 		# give itself an id
 		if not self.set_hash():
 			return False
@@ -63,16 +60,19 @@ class FOIAbilityText(FOIAbilityObject):
 				print "FOIAbilityText ERROR: could not link parent id"
 				return False
 
-		return self.get_bag_of_words() and \
+		if self.get_bag_of_words() and \
 			self.map_NER() and \
-			self.map_word_frequencies()
-			
+			self.map_word_frequencies():
+
+			return FOIAbilityObject.create(self)
 
 	def map_NER(self):
 		try:
 			entities = map_NER_per_page(self.obj['text_stream'])
-			for entity_type in entities.keys():
-				self.obj["entities_%s" % entity_type] = ",".join(entities[entity_type])
+
+			if entities is not None:
+				self.obj['entities_'] = entities
+				print self.obj['entities']
 
 			return True
 		except Exception as e:

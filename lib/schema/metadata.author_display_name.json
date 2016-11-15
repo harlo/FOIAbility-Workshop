@@ -1,0 +1,5 @@
+{
+	"name" : "metadata.author_display_name",
+	"type" : "string",
+	"stored" : true
+}

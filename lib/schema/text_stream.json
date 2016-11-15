@@ -1,0 +1,6 @@
+{
+	"name" : "text_stream",
+	"type" : "string",
+	"stored" : false,
+	"indexed" : true
+}

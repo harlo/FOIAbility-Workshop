@@ -1,0 +1,5 @@
+{
+	"name" : "word_frequencies.*",
+	"type" : "int",
+	"stored" : true
+}

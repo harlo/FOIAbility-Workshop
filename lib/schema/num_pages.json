@@ -1,0 +1,5 @@
+{
+	"name" : "num_pages",
+	"type" : "int",
+	"stored" : true
+}

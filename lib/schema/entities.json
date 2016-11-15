@@ -1,6 +1,7 @@
 {
-	"name" : "linked_docs",
+	"name" : "entities.*",
 	"type" : "string",
 	"stored" : true,
+	"indexed" : true,
 	"multiValued" : true
 }

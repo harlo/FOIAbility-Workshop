@@ -1,0 +1,5 @@
+{
+	"name" : "num_pages_with_embedded_text",
+	"type" : "int",
+	"stored" : true
+}

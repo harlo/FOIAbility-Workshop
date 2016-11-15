@@ -1,9 +1,6 @@
 import requests, json
-import xml.etree.ElementTree as et
-from xmljson import parker
 
-
-from vars import SOLR_URL, SOLR_HEADER
+from vars import SOLR_URL, SOLR_HEADER, RESPONSE_OMIT
 
 class FOIAbilityObject():
 	def __init__(self, id=None):
@@ -11,24 +8,20 @@ class FOIAbilityObject():
 			"id" : id
 		}
 
-	def __parse_xml_response(self, xml):
-		return json.loads(json.dumps(parker.data(et.fromstring(xml))))
-
 	def query_by_facet(self, facet, constraint):
 		print "\n\n*************"
 		print "GETTING BY FACET!"
 		print "*************\n\n"
 		
-		url = "%s/select?q=%s:%s" % (SOLR_URL, facet, constraint)
+		url = "%s/select?q=%s:%s&wt=json" % (SOLR_URL, facet, constraint)
 
 		try:
 			r = requests.get(url, headers=SOLR_HEADER)
 			if r.status_code != 200:
 				print "FOIAbilityObject ERROR: bad response"
-				print r.text
 				return None
 
-			return self.__parse_xml_response(r.text)['result']['doc']
+			return r.json()['response']['docs']
 		except Exception as e:
 			print "FOIAbilityObject ERROR: bad response"
 			print e, type(e)
@@ -40,16 +33,16 @@ class FOIAbilityObject():
 
 		if 'id' not in self.obj.keys() or self.obj['id'] is None:
 			return False
-
-		# query solr by id
-		r = self.query_by_facet("id", self.obj['id'])
 		
 		try:
-			if r is None or r['str'] != self.obj['id']:
+			# query solr by id
+			r = self.query_by_facet("id", self.obj['id'])[0]
+
+			if r is None or r['id'] != self.obj['id']:
 				print "FOIAbilityObject ERROR: couldn't find id %s" % self.obj['id']
 				return False
 
-			return True
+			return self.inflate(r)
 		except Exception as e:
 			print "FOIAbilityObject ERROR: couldn't find id %s" % self.obj['id']
 			print e, type(e)
@@ -72,6 +65,17 @@ class FOIAbilityObject():
 		# add data to be indexed in the doc
 		return False
 
+	def inflate(self, data, extra_omits=None):
+		for omit in RESPONSE_OMIT['inflate']:
+			del data[omit]
+
+		if extra_omits is not None:
+			for omit in extra_omits:
+				del data[omit]
+
+		self.obj.update(data)
+		return True
+
 	def create(self):
 		# create in solr
 		try:		
@@ -84,6 +88,7 @@ class FOIAbilityObject():
 				return False
 
 			if r.json()['responseHeader']['status'] == 0:
+				"FOIAbilityObject SUCCESS: doc %s created" % self.obj['id']
 				return True
 
 		except Exception as e:
@@ -108,6 +113,7 @@ class FOIAbilityObject():
 				return False
 
 			if r.json()['responseHeader']['status'] == 0:
+				"FOIAbilityObject SUCCESS: doc %s deleted" % self.obj['id']
 				return True
 
 		except Exception as e:

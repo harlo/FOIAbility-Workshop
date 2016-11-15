@@ -1,5 +1,6 @@
 {
 	"name" : "added_data",
 	"type" : "string",
-	"stored" : true
+	"stored" : true,
+	"multiValued" : true
 }

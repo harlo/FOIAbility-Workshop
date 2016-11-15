@@ -1,5 +1,5 @@
 {
-	"name" : "parent_id",
+	"name" : "metadata.creator_tool",
 	"type" : "string",
 	"stored" : true
 }

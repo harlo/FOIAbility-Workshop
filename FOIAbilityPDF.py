@@ -16,9 +16,6 @@ class FOIAbilityPDF(FOIAbilityDoc):
 		FOIAbilityDoc.__init__(self, file_path=file_path, id=id)
 
 	def create(self):
-		if not FOIAbilityDoc.create(self):
-			return False
-
 		try:
 			self.pdf_reader = PdfFileReader(open(self.obj['file_path'], 'rb'))
 		except Exception as e:
@@ -26,8 +23,10 @@ class FOIAbilityPDF(FOIAbilityDoc):
 			print e, type(e)
 			return False
 
-		return self.evaluate_text() and \
-			self.evaluate_metadata()
+		if self.evaluate_text() and \
+			self.evaluate_metadata():
+
+			return FOIAbilityDoc.create(self)
 
 	def evaluate_metadata(self):
 		try:
@@ -54,7 +53,7 @@ class FOIAbilityPDF(FOIAbilityDoc):
 			for page in xrange(self.obj['num_pages']):
 				
 				# JUST FOR TESTING
-				if page > 2:
+				if page > 5:
 					break
 
 				text = None
@@ -83,7 +82,7 @@ class FOIAbilityPDF(FOIAbilityDoc):
 				try:
 					self.link_doc(FOIAbilityText(text_stream=text, parent_id=self.obj['id']).obj['id'])
 				except Exception as e:
-					print "FOIAbilityPDF WARN: could not create text object from page"
+					print "FOIAbilityPDF WARN: could not link text object to parent"
 					print e, type(e)
 					continue
 

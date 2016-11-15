@@ -1,0 +1,5 @@
+{
+	"name" : "metadata.modify_date",
+	"type" : "date",
+	"stored" : true
+}

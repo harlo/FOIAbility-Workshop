@@ -2,8 +2,9 @@ import os
 from vars import MIME_TYPES, DATA_DIR
 
 from FOIAbilityObject import FOIAbilityObject
+from FOIAbilitySearchable import FOIAbilitySearchable
 
-class FOIAbilityDoc(FOIAbilityObject):
+class FOIAbilityDoc(FOIAbilityObject, FOIAbilitySearchable):
 	def __init__(self, file_path=None, id=None):
 		FOIAbilityObject.__init__(self, id=id)
 
@@ -11,7 +12,7 @@ class FOIAbilityDoc(FOIAbilityObject):
 			"file_path" : file_path
 		})
 
-		if not self.get_by_id() or not self.get_by_file_path():
+		if not self.get_by_id() and not self.get_by_file_path():
 			print "FOIAbilityDoc WARN: possibly new doc. Creating it..."
 
 			if not self.create():
@@ -19,19 +20,20 @@ class FOIAbilityDoc(FOIAbilityObject):
 
 	def get_by_file_path(self):		
 		if 'file_path' not in self.obj.keys() or self.obj['file_path'] is None:
+			print "FOIAbilityDoc ERROR: no file_path"
 			return False
-		
-		# query solr by file_path
-		r = self.query_by_facet("file_path", self.obj['file_path'])
-		
+				
 		try:
-			if r is None or r['str'] != self.obj['file_path']:
-				print "FOIAbilityDoc ERROR: couldn't find id %s" % self.obj['file_path']
+			# query solr by file_path
+			r = self.query_by_facet("file_path", self.obj['file_path'])[0]
+
+			if r is None or r['file_path'] != self.obj['file_path']:
+				print "FOIAbilityDoc ERROR: couldn't find any doc with at %s" % self.obj['file_path']
 				return False
 
-			return True
+			return self.inflate(r)
 		except Exception as e:
-			print "FOIAbilityDoc ERROR: couldn't find id %s" % self.obj['file_path']
+			print "FOIAbilityDoc ERROR: couldn't find any doc at %s" % self.obj['file_path']
 			print e, type(e)
 
 		return False
@@ -48,7 +50,7 @@ class FOIAbilityDoc(FOIAbilityObject):
 		try:
 			os.mkdir(doc_dir)
 		except Exception as e:
-			print "FOIAbilityDoc ERROR: could not create doc_dir"
+			print "FOIAbilityDoc WARN: could not create doc_dir (exists? %s)" % os.path.exists(doc_dir)
 			print e, type(e)
 
 		return os.path.exists(doc_dir)
@@ -72,7 +74,7 @@ class FOIAbilityDoc(FOIAbilityObject):
 					d = f.read(BUFFER_MAX)
 
 			self.obj['id'] = h.hexdigest()
-			return self.save()
+			return True
 		
 		except Exception as e:
 			print "FOIAbilityDoc ERROR: could not create hash"
@@ -100,20 +102,20 @@ class FOIAbilityDoc(FOIAbilityObject):
 					break
 
 			if "mime_type" in self.obj.keys():
-				return self.save()
+				return True
 
 		return False
 
-	def inflate(self):
-		# inflate all the data from flat files into object
-		return True
+	def inflate(self, data):
+		# inflate all the data from Solr into object
+		if FOIAbilityObject.inflate(self, data):
+			FOIAbilitySearchable.__init__(self)
 
 	def create(self):
 		try:
 			if self.set_hash() and \
 				self.set_mime_type() and \
-				self.create_doc_dir() and \
-				self.inflate():
+				self.create_doc_dir():
 
 				return FOIAbilityObject.create(self)
 

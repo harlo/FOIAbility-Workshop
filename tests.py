@@ -51,10 +51,10 @@ def test_get_bag_of_words_per_page():
 	print bag_of_words
 
 def test_download_ocr_text_per_page():
-	print download_ocr_text_per_page(TEST_PDF_DOCUMENTCLOUD_ID, 1, get_credentials('documentcloud'))
+	print download_ocr_text_per_page(TEST_PDF_DOCUMENTCLOUD_ID, 1, get_credentials('Documentcloud'))
 
 def test_upload_pdf_to_documentcloud():
-	print upload_pdf_to_documentcloud(TEST_PDF, get_credentials('documentcloud'))
+	print upload_pdf_to_documentcloud(TEST_PDF, get_credentials('Documentcloud'))
 
 def test_parse_metadata_from_pdf():
 	print parse_metadata_from_pdf(TEST_EMAIL_PDF)
@@ -67,7 +67,7 @@ def test_check_for_gibberish():
 	print check_for_gibberish(is_gibberish)
 
 def test_get_credentials():
-	print get_credentials('documentcloud')
+	print get_credentials('Documentcloud')
 
 def test_setup_schema():
 	print "SETTING UP SCHEMA"
@@ -92,10 +92,6 @@ def test_create_email():
 	pdf.emit(pretty=True)
 	pdf.delete()
 
-def test_get_doc_by_id():
-	doc = FOIAbilityDoc(id="dummyid")
-	doc.emit(pretty=True)
-
 if __name__ == "__main__":
 	#test_get_credentials()
 	#test_extract_text_per_page()
@@ -106,9 +102,9 @@ if __name__ == "__main__":
 	#test_find_word_frequencies_per_page()
 	#test_get_bag_of_words_per_page()
 	#test_parse_metadata_from_pdf()
-	#test_setup_schema()
+	test_setup_schema()
 	#test_create_doc()
-	test_create_pdf()
+	#test_create_pdf()
 	#test_create_email()
 	#test_create_text()
 	#test_get_doc_by_id()
