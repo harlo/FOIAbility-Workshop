@@ -92,6 +92,10 @@ def test_create_email():
 	pdf.emit(pretty=True)
 	pdf.delete()
 
+def test_get_doc_by_id():
+	doc = FOIAbilityDoc(id="dummyid")
+	doc.emit(pretty=True)
+
 if __name__ == "__main__":
 	#test_get_credentials()
 	#test_extract_text_per_page()
@@ -104,7 +108,8 @@ if __name__ == "__main__":
 	#test_parse_metadata_from_pdf()
 	#test_setup_schema()
 	#test_create_doc()
-	#test_create_pdf()
-	test_create_email()
+	test_create_pdf()
+	#test_create_email()
 	#test_create_text()
-
+	#test_get_doc_by_id()
+	#test_delete_doc()

@@ -7,3 +7,4 @@ python-documentcloud
 google-api-python-client
 beautifulsoup4
 nltk
+xmljson

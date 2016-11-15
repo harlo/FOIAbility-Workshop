@@ -17,12 +17,22 @@ class FOIAbilityDoc(FOIAbilityObject):
 			if not self.create():
 				print "FOIAbilityDoc ERROR: could not create this unknown document"
 
-	def get_by_file_path(self):
-		# inflate from solr by file_path
+	def get_by_file_path(self):		
+		if 'file_path' not in self.obj.keys() or self.obj['file_path'] is None:
+			return False
 		
-		if 'file_path' in self.obj.keys() and self.obj['file_path'] is not None:
-			# query solr by file_path
-			pass
+		# query solr by file_path
+		r = self.query_by_facet("file_path", self.obj['file_path'])
+		
+		try:
+			if r is None or r['str'] != self.obj['file_path']:
+				print "FOIAbilityDoc ERROR: couldn't find id %s" % self.obj['file_path']
+				return False
+
+			return True
+		except Exception as e:
+			print "FOIAbilityDoc ERROR: couldn't find id %s" % self.obj['file_path']
+			print e, type(e)
 
 		return False
 
@@ -39,6 +49,7 @@ class FOIAbilityDoc(FOIAbilityObject):
 			os.mkdir(doc_dir)
 		except Exception as e:
 			print "FOIAbilityDoc ERROR: could not create doc_dir"
+			print e, type(e)
 
 		return os.path.exists(doc_dir)
 
@@ -98,14 +109,13 @@ class FOIAbilityDoc(FOIAbilityObject):
 		return True
 
 	def create(self):
-		if not FOIAbilityObject.create(self):
-			return False
-
 		try:
-			return self.set_hash() and \
+			if self.set_hash() and \
 				self.set_mime_type() and \
 				self.create_doc_dir() and \
-				self.inflate()
+				self.inflate():
+
+				return FOIAbilityObject.create(self)
 
 		except Exception as e:
 			print "FOIAbilityDoc ERROR: could not create document."
@@ -114,9 +124,31 @@ class FOIAbilityDoc(FOIAbilityObject):
 		return False
 
 	def delete(self, delete_file=False):
-		if not FOIAbilityObject.delete(self):
-			return False
-		
+		try:
+			if self.delete_doc_dir(delete_file=delete_file) and \
+				self.unlink_docs():
+
+				return FOIAbilityObject.delete(self)
+		except Exception as e:
+			print "FOIAbilityDoc ERROR: could not delete doc %s" % self.obj['id']
+			print e, type(e)
+
+		return False
+
+	def unlink_docs(self):
+		for doc_id in self.obj['linked_docs']:
+			doc = FOIAbilityObject(id=doc_id)
+			print doc.obj['id']
+
+			try:
+				doc.delete()
+			except Exception as e:
+				print "FOIAbilityDoc ERROR: couldn't delete linked doc %s" % doc_id
+				print e, type(e)
+
+		return True
+
+	def delete_doc_dir(self, delete_file=False):
 		# remove assets
 		if 'id' not in self.obj.keys() or self.obj['id'] is None:
 			print "FOIAbilityDoc ERROR: no id"

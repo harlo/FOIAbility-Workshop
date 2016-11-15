@@ -4,6 +4,9 @@ DATA_DIR = os.path.join(os.path.expanduser('~'), "stash")
 LIB_DIR = os.path.join(os.getcwd(), "lib")
 MISC_DIR = os.path.join(LIB_DIR, "misc")
 
+SOLR_URL = "http://localhost:8983/solr/FOIAbility"
+SOLR_HEADER = {"Content-Type" : "application/json"}
+
 BUFFER_MAX = 65536
 
 MIME_TYPES = {

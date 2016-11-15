@@ -95,7 +95,6 @@ class FOIAbilityText(FOIAbilityObject):
 	def get_bag_of_words(self):
 		try:
 			self.obj['bag_of_words'] = get_bag_of_words_per_page(self.obj['text_stream'], STOPWORDS_PATH)
-			print self.obj['bag_of_words']
 			
 			return True
 		except Exception as e:

@@ -44,10 +44,11 @@ def check_for_gibberish(text):
 			print "check_for_gibberish WARN: Dividing average word length by zero :("
 			AVERAGE_WORD_LENGTH = 0
 
-
+		'''
 		print "\n\n*************"
 		print "AVERAGE LENGTHS: %f" % AVERAGE_WORD_LENGTH
 		print "SIGNIFICANT-WORDS-TO-PUNCTUATION (total %d): %d / %d" % (len(word_lengths), num_signifigant_words, num_punctuation)
+		'''
 
 		def ratio(a, b):
 			a = float(a)
@@ -76,9 +77,11 @@ def check_for_gibberish(text):
 		# DISCLAIMER: i threw this together quickly, so
 		# let's discuss! could be wrong!
 		
+		'''
 		print "RATIO OF SIGNIFICANT WORDS TO ALL WORDS: %f" % ratio_significant_words
 		print "RATIO OF PUNCTUATION TO ALL WORDS: %f" % ratio_punctuation
 		print "*************\n\n"
+		'''
 
 		if AVERAGE_WORD_LENGTH == 0:
 			return True

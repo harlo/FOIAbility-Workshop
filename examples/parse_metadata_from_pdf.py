@@ -1,11 +1,12 @@
 from fabric.api import settings, local
+from fabric.context_managers import hide
 from bs4 import BeautifulSoup
 
 from vars import LIB_DIR, MISC_DIR, MIME_TYPES
 
 def parse_metadata_from_pdf(pdf):
 	# use Peepdf to locate metadata
-	with settings(warn_only=True):
+	with settings(hide('everything'), warn_only=True):
 		raw_metadata = local("%s/Peepdf/peepdf.py %s -s %s/peepdf_batch.txt" % (LIB_DIR, pdf, MISC_DIR), capture=True)
 
 	if raw_metadata.return_code is not 1:

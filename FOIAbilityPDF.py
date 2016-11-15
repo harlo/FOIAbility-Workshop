@@ -52,6 +52,11 @@ class FOIAbilityPDF(FOIAbilityDoc):
 
 			# for each page, attempt to extract text
 			for page in xrange(self.obj['num_pages']):
+				
+				# JUST FOR TESTING
+				if page > 2:
+					break
+
 				text = None
 				
 				if mode == MODES['PyPDF']:
@@ -74,9 +79,6 @@ class FOIAbilityPDF(FOIAbilityDoc):
 				if text is None or len(text) == 0:
 					continue
 
-				# increment tally
-				self.obj['num_pages_with_embedded_text'] = (self.obj['num_pages_with_embedded_text'] + 1)
-
 				# make indexible text object for text
 				try:
 					self.link_doc(FOIAbilityText(text_stream=text, parent_id=self.obj['id']).obj['id'])
@@ -85,8 +87,8 @@ class FOIAbilityPDF(FOIAbilityDoc):
 					print e, type(e)
 					continue
 
-				if page > 15:
-					break
+				# increment tally on success
+				self.obj['num_pages_with_embedded_text'] = (self.obj['num_pages_with_embedded_text'] + 1)
 
 			return True
 		except Exception as e:
