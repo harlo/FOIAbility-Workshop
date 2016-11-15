@@ -9,6 +9,7 @@ def setup_schema():
 			with open(os.path.join(schema_dir, schema), 'rb') as S:
 
 				if s in ["%s.json" % d for d in SOLR_DYNAMIC_FIELDS]:
+					print "INSERTING A DYNAMIC FIELD!"
 					field_type = "add-dynamic-field"
 				else:	
 					field_type = "add-field"

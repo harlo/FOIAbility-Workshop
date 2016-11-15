@@ -1,6 +1,7 @@
 import requests, json
+from copy import deepcopy
 
-from vars import SOLR_URL, SOLR_HEADER, RESPONSE_OMIT
+from vars import SOLR_URL, SOLR_HEADER, RESPONSE_OMIT, PRETTY_OMIT_FIELDS
 
 class FOIAbilityObject():
 	def __init__(self, id=None):
@@ -9,10 +10,6 @@ class FOIAbilityObject():
 		}
 
 	def query_by_facet(self, facet, constraint):
-		print "\n\n*************"
-		print "GETTING BY FACET!"
-		print "*************\n\n"
-		
 		url = "%s/select?q=%s:%s&wt=json" % (SOLR_URL, facet, constraint)
 
 		try:
@@ -124,8 +121,17 @@ class FOIAbilityObject():
 
 	def emit(self, pretty=False):
 		if pretty:
+			pretty_emit = deepcopy(self.obj)
+			pretty_omit = []
+
+			for key in pretty_emit.keys():
+				if key in PRETTY_OMIT_FIELDS:
+					del pretty_emit[key]
+					pretty_omit.append(str(key))
+
 			print "**********\n"
-			print json.dumps(self.obj, sort_keys=True, indent=4)
+			print json.dumps(pretty_emit, sort_keys=True, indent=4)
+			print "\nplus fields not shown here: %s" % pretty_omit
 			print "\n**********\n"
 		
 		return self.obj

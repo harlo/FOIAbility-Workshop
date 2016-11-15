@@ -22,6 +22,7 @@ TEST_PDF = os.path.join(DATA_DIR, "rindfleisch_a90d1239f1626171d2e5cb759e8891d6_
 TEST_EMAIL_PDF = os.path.join(DATA_DIR, "fpf_foia_emails.pdf")
 TEST_PDF_DOCUMENTCLOUD_ID = ""
 TEST_TEXT_BLOB = "I complained to Microsoft about Bill Gates and Oprah"
+TEST_TEXT_ASSET = "1001cb5fb746ab965c524191f9d85ae97ffbd1a57db4ea42ea9ea7aa4475f1db"
 
 def test_extract_text_per_page():
 	first_page = extract_text_per_page(TEST_PDF, 1)
@@ -92,7 +93,12 @@ def test_create_email():
 	pdf.emit(pretty=True)
 	pdf.delete()
 
+def test_get_text():
+	text = FOIAbilityText(id=TEST_TEXT_ASSET)
+	text.emit(pretty=True)
+
 if __name__ == "__main__":
+	#test_get_text()
 	#test_get_credentials()
 	#test_extract_text_per_page()
 	#test_check_for_gibberish()

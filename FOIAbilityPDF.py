@@ -1,3 +1,4 @@
+import re
 from PyPDF2 import PdfFileReader
 
 from FOIAbilityDoc import FOIAbilityDoc
@@ -28,6 +29,8 @@ class FOIAbilityPDF(FOIAbilityDoc):
 
 			return FOIAbilityDoc.create(self)
 
+		return False
+
 	def evaluate_metadata(self):
 		try:
 			metadata = parse_metadata_from_pdf(self.obj['file_path'])
@@ -41,6 +44,25 @@ class FOIAbilityPDF(FOIAbilityDoc):
 
 		return False
 
+	def inflate_metadata(self):
+		# solr borks nested values
+		metadata = {}
+		for key in self.obj.keys():
+			m = re.findall(r'metadata\.(.*)', key)
+
+			if len(m) == 0:
+				continue
+
+			try:
+				metadata[m[0]] = self.obj[key]
+				del self.obj[key]
+
+			except Exception as e:
+				print e, type(e)
+				continue
+
+		self.obj['metadata'] = metadata
+
 	def evaluate_text(self, mode=MODES['PyPDF']):
 		try:
 			# get number of pages
@@ -51,10 +73,13 @@ class FOIAbilityPDF(FOIAbilityDoc):
 
 			# for each page, attempt to extract text
 			for page in xrange(self.obj['num_pages']):
+				print "FOIAbilityPDF INFO: Indexing page %d/%d" % (page + 1, self.obj['num_pages'])
 				
-				# JUST FOR TESTING
+				# UNCOMMENT FOR TESTING
+				'''
 				if page > 5:
 					break
+				'''
 
 				text = None
 				
@@ -95,3 +120,10 @@ class FOIAbilityPDF(FOIAbilityDoc):
 			print e, type(e)
 		
 		return False
+
+	def inflate(self, data, extra_omits=None):
+		if not FOIAbilityDoc.inflate(self, data, extra_omits=extra_omits):
+			return False
+
+		self.inflate_metadata()
+		return True

@@ -106,10 +106,13 @@ class FOIAbilityDoc(FOIAbilityObject, FOIAbilitySearchable):
 
 		return False
 
-	def inflate(self, data):
+	def inflate(self, data, extra_omits=None):
 		# inflate all the data from Solr into object
-		if FOIAbilityObject.inflate(self, data):
+		if FOIAbilityObject.inflate(self, data, extra_omits=extra_omits):
 			FOIAbilitySearchable.__init__(self)
+			return True
+
+		return False
 
 	def create(self):
 		try:

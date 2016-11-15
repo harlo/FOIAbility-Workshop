@@ -1,7 +1,0 @@
-{
-	"name" : "entities.*",
-	"type" : "string",
-	"stored" : true,
-	"indexed" : true,
-	"multiValued" : true
-}

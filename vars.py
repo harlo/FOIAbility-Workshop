@@ -15,6 +15,8 @@ RESPONSE_OMIT = {
 	"inflate" : ["_version_"]
 }
 
+PRETTY_OMIT_FIELDS = ['linked_docs']
+
 MIME_TYPES = {
 	"pdf" : {
 		"aliases" : [
